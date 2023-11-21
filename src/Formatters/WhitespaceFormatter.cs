@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -55,7 +56,8 @@ namespace Microsoft.CodeAnalysis.Tools.Formatters
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             // Since we've already checked that formatable documents support syntax tree, we know the `root` is not null.
-            var formattingTextChanges = Formatter.GetFormattedTextChanges(root!, document.Project.Solution.Workspace, optionSet, cancellationToken);
+            var formattingTextChanges = Formatter.GetFormattedTextChanges(root!, document.Project.Solution.Workspace, optionSet, cancellationToken)
+                .Where(change => sourceText.ToString(change.Span) != change.NewText);
 
             return sourceText.WithChanges(formattingTextChanges);
         }
