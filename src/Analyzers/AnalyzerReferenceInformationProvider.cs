@@ -23,8 +23,20 @@ namespace Microsoft.CodeAnalysis.Tools.Analyzers
             FormatOptions formatOptions,
             ILogger logger)
         {
-            return solution.Projects
+            var output = solution.Projects
                 .ToImmutableDictionary(project => project.Id, GetAnalyzersAndFixers);
+
+            var style = new CodeStyleInformationProvider().GetAnalyzersAndFixers(solution, formatOptions, logger);
+
+            return output
+                .Concat(style)
+                .GroupBy(x => x.Key, x => x.Value)
+                .ToDictionary(
+                    x => x.Key,
+                    x => new AnalyzersAndFixers(
+                        x.SelectMany(x => x.Analyzers).ToImmutableArray(),
+                        x.SelectMany(x => x.Fixers).ToImmutableArray()))
+                .ToImmutableDictionary();
         }
 
         private AnalyzersAndFixers GetAnalyzersAndFixers(Project project)

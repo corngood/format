@@ -15,15 +15,15 @@ namespace Microsoft.CodeAnalysis.Tools.Analyzers
 {
     internal class AnalyzerFormatter : ICodeFormatter
     {
-        public static AnalyzerFormatter CodeStyleFormatter => new AnalyzerFormatter(
-            Resources.Code_Style,
-            FixCategory.CodeStyle,
-            includeCompilerDiagnostics: false,
-            new CodeStyleInformationProvider(),
-            new AnalyzerRunner(),
-            new SolutionCodeFixApplier());
+        // public static ICodeFormatter CodeStyleFormatter => new AnalyzerFormatter(
+        //     Resources.Code_Style,
+        //     FixCategory.CodeStyle,
+        //     includeCompilerDiagnostics: false,
+        //     new CodeStyleInformationProvider(),
+        //     new AnalyzerRunner(),
+        //     new SolutionCodeFixApplier());
 
-        public static AnalyzerFormatter ThirdPartyFormatter => new AnalyzerFormatter(
+        public static ICodeFormatter Default => new AnalyzerFormatter(
             Resources.Analyzer_Reference,
             FixCategory.Analyzers,
             includeCompilerDiagnostics: true,
