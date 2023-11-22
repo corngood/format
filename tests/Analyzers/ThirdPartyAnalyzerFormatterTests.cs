@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.Tools.Tests.Analyzers
     {
         private static readonly string s_analyzerProjectFilePath = Path.Combine("for_analyzer_formatter", "analyzer_project", "analyzer_project.csproj");
 
-        private protected override ICodeFormatter Formatter => AnalyzerFormatter.ThirdPartyFormatter;
+        private protected override ICodeFormatter Formatter => AnalyzerFormatter.Default;
 
         private Project _analyzerReferencesProject;
 

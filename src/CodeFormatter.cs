@@ -24,8 +24,7 @@ namespace Microsoft.CodeAnalysis.Tools
             new EndOfLineFormatter(),
             new CharsetFormatter(),
             new OrganizeImportsFormatter(),
-            AnalyzerFormatter.CodeStyleFormatter,
-            AnalyzerFormatter.ThirdPartyFormatter);
+            AnalyzerFormatter.Default);
 
         public static async Task<WorkspaceFormatResult> FormatWorkspaceAsync(
             FormatOptions formatOptions,
