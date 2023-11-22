@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.Tools.Tests.Formatters
         private const string RemoveUnnecessaryImportCategoryKey =
             AnalyzerOptionsExtensions.DotnetAnalyzerDiagnosticPrefix + "." + AnalyzerOptionsExtensions.CategoryPrefix + "-" + Style + "." + AnalyzerOptionsExtensions.SeveritySuffix;
 
-        private protected override ICodeFormatter Formatter => AnalyzerFormatter.CodeStyleFormatter;
+        private protected override ICodeFormatter Formatter => AnalyzerFormatter.Default;
 
         public UnnecessaryImportsFormatterTests(ITestOutputHelper output)
         {
