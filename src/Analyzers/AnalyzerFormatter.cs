@@ -308,9 +308,17 @@ namespace Microsoft.CodeAnalysis.Tools.Analyzers
 
                 // Filter analyzers by project's language
                 var filteredAnalyzer = projectAnalyzersAndFixers[projectId].Analyzers
-                    .Where(analyzer => DoesAnalyzerSupportLanguage(analyzer, project.Language));
+                    .Where(analyzer => DoesAnalyzerSupportLanguage(analyzer, project.Language))
+                    .ToImmutableArray();
+
                 foreach (var analyzer in filteredAnalyzer)
                 {
+                    // We'll deal with these after we have a list of diagnostics
+                    if (analyzer is DiagnosticSuppressor)
+                    {
+                        continue;
+                    }
+
                     // Filter by excluded diagnostics
                     if (!excludeDiagnostics.IsEmpty &&
                         analyzer.SupportedDiagnostics.All(descriptor => excludeDiagnostics.Contains(descriptor.Id)))
@@ -335,6 +343,21 @@ namespace Microsoft.CodeAnalysis.Tools.Analyzers
 
                     var severity = await analyzer.GetSeverityAsync(project, formattablePaths, cancellationToken).ConfigureAwait(false);
                     if (severity >= minimumSeverity)
+                    {
+                        analyzers.Add(analyzer);
+                    }
+                }
+
+                var analyzerDiagnostics = analyzers
+                    .SelectMany(analyzer => analyzer.SupportedDiagnostics)
+                    .Select(descriptor => descriptor.Id)
+                    .ToImmutableHashSet();
+
+                foreach (var analyzer in filteredAnalyzer)
+                {
+                    if (analyzer is DiagnosticSuppressor suppressor &&
+                        suppressor.SupportedSuppressions.Any(
+                            descriptor => analyzerDiagnostics.Contains(descriptor.SuppressedDiagnosticId)))
                     {
                         analyzers.Add(analyzer);
                     }
